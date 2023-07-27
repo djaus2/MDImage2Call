@@ -20,6 +20,7 @@ File: image.html in /include
 
 Parameters:
 - imagefile:        The image file in /images
+- tag               The div Id that the image is placed in
 - alt:              The image alt text
 
 Site Setting:
