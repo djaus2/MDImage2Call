@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Reflection;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -12,48 +13,24 @@ namespace MDImage2Call
         static string mask = "2023-0*.md";                                // File search mask
         static void Main(string[] args)
         {
+
             if (args.Length >0)
             {
                 if (args[0]!="")
                 {
 
-                    if (args[0]=="/?")
+                    if ((args[0]=="/?") || (args[0].ToLower() == "-help"))
                     {
                         Console.WriteLine("About:");
+                        Console.WriteLine("-------");
                         Console.WriteLine("With Jekyll blog posts convert MarkDown image tags to use auto resized image include file.");
                         Console.WriteLine("Usage:");
+                        Console.WriteLine("-------");
                         Console.WriteLine("MSImage2Call [File Mask] [Target Folder wrt to:] [Repository Folder]");
-                        Console.WriteLine("Target Folder can be a single character in which case posts is used but Repository Folder IS inputed.");
-                        Console.WriteLine();
-                        Console.WriteLine("image.html in /include");
-                        Console.WriteLine("---------------=============--------");
-                        Console.WriteLine("Parameters: imagefile divTag altText");
-                        Console.WriteLine("------------------------------------");
-                        string imageHTML = @"
-<div id=""{{include.tag}}"" style=""Display:none"">
-    <img src=""/{{site.images}}/{{include.imagefile}}"" alt=""{{include.alt}}"">
-</div>
+                        Console.WriteLine("Target Folder can be a single character in which case _posts is used but Repository Folder as specified is used.");
 
-<div id=""{{include.tag}}small"" style=""Display:none"">
-    <a href=""/{{site.images}}/{{include.imagefile}}"" target=""_blank""><img src=""/images/{{include.imagefile}}"" width=""360"" alt=""{{include.alt}}""></a>
-<br /><small><i>Tap and rotate phone to enlarge.</i></small>
-</div>
+                        ReadImageFile();
 
-<script>
-    if (document.body.clientWidth >={{site.phonewidth}} )
-    {
-        document.getElementById('{{include.tag}}').style.display = ""block"";
-        document.getElementById('{{include.tag}}small').style.display = ""none"";
-    }
-    else
-    {
-        document.getElementById('{{include.tag}}').style.display = ""none"";
-        document.getElementById('{{include.tag}}small').style.display = ""block"";
-    }
-</script>
-                            ";
-                        Console.WriteLine(imageHTML); 
-                        
                         Console.WriteLine();
                         return;
                     }
@@ -186,5 +163,29 @@ namespace MDImage2Call
                 File.WriteAllLines(fileNameOut, linesOut);
             }
         }
+
+        static void ReadImageFile()
+        {
+            string result = "";
+            Console.WriteLine();
+            Console.WriteLine("image.html in /include");
+            Console.WriteLine("For Jekyll blog site");
+            Console.WriteLine("------------------------------------");
+            Console.WriteLine("Parameters: imagefile divTag altText");
+            Console.WriteLine("------------------------------------");
+
+            try
+            {
+                result = MDImage2Call.Resource1.image_html;
+                Console.WriteLine(result);
+            }
+            catch
+            {
+                Console.WriteLine("Error accessing resources!");
+            }
+
+        }
     }
+
+
 }
