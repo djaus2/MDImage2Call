@@ -8,6 +8,9 @@ This is useful for the display of blog posts on a phone where text may be render
 small columns becuase of wide images. On a phone in portrait mode, all images a rendered
  with the same width but can be clicked upon to expand.
 
+## Further
+[Jekyll: Rendering on a Mobile](https://davidjones.sportronics.com.au/web/Jekyll-Rendering_on_a_Mobile-rel-web.html) blog post.
+
 ## About image.html
 
 File: image.html in /include 
