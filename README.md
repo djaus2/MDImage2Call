@@ -11,7 +11,7 @@ small columns becuase of wide images. On a phone in portrait mode, all images a 
 ## Further
 [Jekyll: Rendering on a Mobile](https://davidjones.sportronics.com.au/web/Jekyll-Rendering_on_a_Mobile-rel-web.html) blog post.
 
-## About image.html
+## About imageMulti.html
 
 File: imageMulti.html in /include 
 
