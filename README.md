@@ -19,7 +19,7 @@ File: imageMulti.html in /include
 - In phone mode can click on it and show in full width mode.
 
 Parameters:
-- imagefile:        The image file in /images
+- imagefile:        The image file in /images, /media or /grove or as in imgFolders
 - tag               The div Id that the image is placed in
 - alt:              The image alt text
 - imgFolders        A csv list of folders containing images
