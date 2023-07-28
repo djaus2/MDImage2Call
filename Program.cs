@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using System.Reflection;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
@@ -10,29 +11,48 @@ namespace MDImage2Call
         static string repFolder = "C:\\Users\\david\\repos\\DJzBlog";     // Jekyll Blog Posts root folder
         static string postsFolder = "_posts";                             // Source folder of posts in MarkDown format
         static string targetFolder = "_postsTemp";                        // Folder to place modified files in
+        static string imgFolders = "images,media,grove";                  // Folders in which images are placed
         static string mask = "2023-0*.md";                                // File search mask
+        static int numFilesToShoOnConsole = 0;                            // Show target file contents for this number of files. (First ...)
+        static bool ShowContents = false;
+        static string imgFolder = "images";
+        static string[] ImageFolders = new string[0];
         static void Main(string[] args)
         {
-
             if (args.Length >0)
             {
                 if (args[0]!="")
                 {
 
-                    if ((args[0]=="/?") || (args[0].ToLower() == "-help"))
+                    if ((args[0] == "/?") || (args[0].ToLower() == "-help") || (args[0].ToLower() == "--help"))
                     {
                         Console.WriteLine("About:");
                         Console.WriteLine("-------");
-                        Console.WriteLine("With Jekyll blog posts convert MarkDown image tags to use auto resized image include file.");
+                        Console.WriteLine("With Jekyll blog posts convert MarkDown image tags to use auto resized image include file (imageMulti.html).");
+                        Console.WriteLine();
                         Console.WriteLine("Usage:");
                         Console.WriteLine("-------");
-                        Console.WriteLine("MSImage2Call [File Mask] [Target Folder wrt to:] [Repository Folder]");
-                        Console.WriteLine("Target Folder can be a single character in which case _posts is used but Repository Folder as specified is used.");
-
-                        ReadImageFile();
-
+                        Console.WriteLine("MSImage2Call [File Mask] [Target Folder wrt to:] [Repository Folder] {Images folders csv list]");
+                        Console.WriteLine("Parameters can be - in which case they are skipped but parameters to right will be interogated.");
+                        Console.WriteLine("Images folders is images,media,grove.");
+                        Console.WriteLine();
+                        Console.WriteLine("Alternative Usages:");
+                        Console.WriteLine("-------------------");
+                        Console.WriteLine("MSImage2Call /? | -help | --help   to get this");
+                        Console.WriteLine("\tOR");
+                        Console.WriteLine("MSImage2Call -img to display image.html file");
                         Console.WriteLine();
                         return;
+                    }
+                    else if ((args[0].Substring(0, "-img".Length) == "-img"))
+                    {
+                        ReadImageFile();
+                        Console.WriteLine();
+                        return;
+                    }
+                    else if (args[0].Length==1)
+                    {
+                        //Skip
                     }
                     else if (args[0].Contains(".md"))
                     {
@@ -46,21 +66,48 @@ namespace MDImage2Call
                     }
                     if (args.Length>1)
                     {
+                        if (args[1].Length == 1)
+                        {
+                            //Skip
+                        }
                         // Use a single character to skip 2nd parameter
-                        if (args[1].Length>1)
+                        else if (args[1].Length>1)
                         {
                             postsFolder = args[1];
                             targetFolder = args[1] + "Temp";
                         }
                         if (args.Length >2)
                         {
-                            repFolder = args[2];
+                            if (args[2].Length == 1)
+                            {
+                                //Skip
+                            }
+                            else if(args[2].Length > 1)
+                            {
+                                repFolder = args[2];
+                            }
+                            if (args.Length > 3)
+                            {
+                                if (args[3].Length == 1)
+                                {
+                                    //Skip
+                                }
+                                else if (args[3].Length > 1)
+                                {
+                                    imgFolders = args[3];
+                                }
+                            }
                         }
                     }
                 }
             }
+            ImageFolders = imgFolders.Split(',');
             string PostsDir = $"{repFolder}\\{postsFolder}";
             var files = Directory.GetFiles(PostsDir,mask);
+            if (files.Count() > numFilesToShoOnConsole)
+                ShowContents = false;
+            else
+                ShowContents = true;
 
             // Call doFile() for each post in the PostsDir directory
             foreach (var file in files) {
@@ -85,9 +132,13 @@ namespace MDImage2Call
         { 
             string[] linesOut = new string[0];
             string pathToFile = $"{repFolder}\\{postsFolder}\\{file}";
-            Console.WriteLine("Convert Marhkdown Image tag to call included Jekyl image.html!");
+            if(ShowContents)
+                Console.WriteLine("Convert Marhkdown Image tag to call included Jekyl image.html!");
             int imgNo = 0;
-            foreach (string line in File.ReadAllLines(pathToFile))
+            string[] lines = File.ReadAllLines(pathToFile);
+            if (lines.Length == 0)
+                return;
+            foreach (string line in lines )
             {
                 bool imgFound = false;
 
@@ -109,29 +160,48 @@ namespace MDImage2Call
                                 int indx5 = line.IndexOf(')', indx4);
                                 if (indx5 > -1)
                                 {
-                                    imgNo++;
-                                    imgFound = true;
+
                                     string img = line.Substring(indx1,1+ indx5 - indx1);
-                                    //Console.WriteLine(img);
                                     string alt = line.Substring(indx2 + 1, indx3 - indx2 - 1).Trim(); ;
                                     string filePath =  line.Substring(indx4+1,  indx5 - indx4-1).Trim();
-                                    //Console.WriteLine(alt);
-                                    //Console.WriteLine(filePath);
-                                    if(filePath.Substring(0, "/images".Length)== "/images")
-                                        filePath = filePath.Substring("/images".Length);
-                                           
-                                    string lin = $"{{% include image.html imagefile = \"{filePath}\" tag = \"QWERTY{imgNo}\" alt = \"{alt}\" %}}";
+                                    //Remove /images from start of image file path, as assumed by the image,.html "macro"
+                                    bool validFolder = false;
+                                    foreach (var fol in ImageFolders)
+                                    {
+                                        string ffol = "/" + fol;
+                                        if (filePath.Substring(0,ffol.Length) == ffol)
+                                        {
+                                            imgFolder = fol;
+                                            validFolder = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!validFolder)
+                                    {
+                                        // Skip for now
+                                        if (ShowContents)
+                                            Console.WriteLine(line);
+                                        linesOut = linesOut.Append(line).ToArray();
+                                        continue;
+                                    }
+                                    imgNo++;
+                                    imgFound = true;
+                                    string lin = $"{{% include imageMulti.html imagefile = \"{filePath}\" tag = \"QWERTY{imgNo}\" alt = \"{alt}\"  %}}";
                                     if (indx1 != 0)
                                         lin = line.Substring(0, indx1 - 1) + lin;
                                     if (indx5 < line.Length-1)
                                         lin += line.Substring(indx5);
-                                    Console.WriteLine("{% comment %}");
-                                    linesOut = linesOut.Append("{% comment %}").ToArray();
-                                    Console.WriteLine(line);
+                                    if (ShowContents)
+                                        Console.WriteLine("{% comment %}");
+                                    linesOut = linesOut.Append("{% comment %}").ToArray(); 
+                                    if (ShowContents)
+                                        Console.WriteLine(line);
                                     linesOut = linesOut.Append(line).ToArray();
-                                    Console.WriteLine("{% endcomment %}");
+                                    if (ShowContents)
+                                        Console.WriteLine("{% endcomment %}");
                                     linesOut = linesOut.Append("{% endcomment %}").ToArray();
-                                    Console.WriteLine(lin);
+                                    if (ShowContents)
+                                        Console.WriteLine(lin);
                                     linesOut = linesOut.Append(lin).ToArray();
                                 }
                             }
@@ -141,14 +211,15 @@ namespace MDImage2Call
                 if(!imgFound)
                 {
                     // No MarkDown image in the line so just add the unadulterated line
-                    Console.WriteLine(line);
+                    if (ShowContents)
+                        Console.WriteLine(line);
                     linesOut = linesOut.Append(line).ToArray();
                 }
             }
             if(imgNo>0)
             {
                 //if more than one image in file using MarkDown syntax then write new version of file to Target folder.
-
+              
                 // Check if target exists and iff not create it
                 string TargetDir = $"{repFolder}\\{targetFolder}";
                 if (!Directory.Exists(TargetDir))
@@ -156,6 +227,7 @@ namespace MDImage2Call
 
                 // If file exists in Target Folder delete it
                 string fileNameOut = $"{TargetDir}\\{file}";
+                Console.WriteLine(fileNameOut);
                 if (File.Exists(fileNameOut))
                     File.Delete(fileNameOut);
 

@@ -13,15 +13,16 @@ small columns becuase of wide images. On a phone in portrait mode, all images a 
 
 ## About image.html
 
-File: image.html in /include 
+File: imageMulti.html in /include 
 
-- Display an image from file in /images in fullscreen mode, for desktop or 360 width for phone.
+- Display an image from file in /images /media or /grove in fullscreen mode, for desktop or 360 width for phone.
 - In phone mode can click on it and show in full width mode.
 
 Parameters:
 - imagefile:        The image file in /images
 - tag               The div Id that the image is placed in
 - alt:              The image alt text
+- imgFolders        A csv list of folders containing images
 
 Site Setting:
 - in _config.yml 
