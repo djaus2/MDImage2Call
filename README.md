@@ -1,7 +1,7 @@
 # MDImage2Call
 
 ***For MarkDown files in a a Jekyll blog site (source), translate 
-MarkDown image constructs to a call to included file image.html 
+MarkDown image constructs to a call to included file imageMulti.html 
 with same meta-info***
 
 This is useful for the display of blog posts on a phone where text may be rendered in 
