@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Metadata;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace MDImage2Call
@@ -141,6 +142,14 @@ namespace MDImage2Call
             foreach (string line in lines )
             {
                 bool imgFound = false;
+                if (line.Contains("{% comment %}"))
+                {
+                    // Skip file as has been previously processed.
+                    // A safeguard!
+                    Console.Write("This file was previously processed. Cntrl-C now to kill this.");
+                    Console.ReadLine();
+                    return;
+                }
 
                 //MarkDown image starts with "!["
                 int indx1 = line.IndexOf("![");

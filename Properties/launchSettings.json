@@ -1,7 +1,8 @@
 {
   "profiles": {
     "MDImage2Call": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "/?"
     }
   }
 }
