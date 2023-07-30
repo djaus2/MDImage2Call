@@ -15,7 +15,7 @@ MSImage2Call [File Mask] [Target Folder wrt to:] [Repository Folder] {Images fol
 - The app reads all MD files in ```_posts``` subject to the ```mask```, and writes 
 modified files to ```_postsTemp```.
 - Run with  ```/?``` ```-help``` or ```--help```` to get a list of the app parameters.
-- Run with ```img``` to get a listing of the include file imag.html
+- Run with ```img``` to get a listing of the include file ```image.html```
 
 
 ## Further
