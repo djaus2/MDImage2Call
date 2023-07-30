@@ -8,6 +8,10 @@ with same meta-info***
 small columns becuase of wide images. On a phone in portrait mode, all images a rendered
  with the same width but can be clicked upon to expand.
 
+```
+MSImage2Call [File Mask] [Target Folder wrt to:] [Repository Folder] {Images folders csv list]
+```
+
 - The app reads all MD files in ```_posts``` subject to the ```mask```, and writes 
 modified files to ```_postsTemp```.
 - Run with  ```/?``` ```-help``` or ```--help```` to get a list of the app parameters.
