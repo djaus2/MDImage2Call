@@ -1,4 +1,4 @@
-<!-- imageMulti.html -->
+<!-- image.html -->
 <div id="{{include.tag}}" style="Display:none">
     <img src="{{include.imagefile}}" alt="{{alt}}">
 </div>

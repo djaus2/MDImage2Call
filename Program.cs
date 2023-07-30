@@ -8,8 +8,8 @@ namespace MDImage2Call
 {
     internal class Program
     {
-        static string repFolder = "C:\\Users\\david\\repos\\DJzBlog";     // Jekyll Blog Posts root folder
-        static string postsFolder = "_posts";                             // Source folder of posts in MarkDown format
+        static string repFolder = "C:\\Users\\david\\repos\\DjsBlog2\\DJzBlog";     // Jekyll Blog Posts root folder
+        static string postsFolder = "_postsBak";                             // Source folder of posts in MarkDown format
         static string targetFolder = "_postsTemp";                        // Folder to place modified files in
         static string imgFolders = "images,media,grove";                  // Folders in which images are placed
         static string mask = "2023-0*.md";                                // File search mask
@@ -186,11 +186,12 @@ namespace MDImage2Call
                                     }
                                     imgNo++;
                                     imgFound = true;
-                                    string lin = $"{{% include imageMulti.html imagefile = \"{filePath}\" tag = \"QWERTY{imgNo}\" alt = \"{alt}\"  %}}";
+                                    string lin = $"{{% include image.html imagefile = \"{filePath}\" tag = \"QWERTY{imgNo}\" alt = \"{alt}\"  %}}";
                                     if (indx1 != 0)
                                         lin = line.Substring(0, indx1 - 1) + lin;
-                                    if (indx5 < line.Length-1)
-                                        lin += line.Substring(indx5);
+                                    if (indx5 < line.Length)
+                                        //Skip closing bracket so only append characters from one more than end of MD image construct
+                                        lin += line.Substring(indx5+1);
                                     if (ShowContents)
                                         Console.WriteLine("{% comment %}");
                                     linesOut = linesOut.Append("{% comment %}").ToArray(); 
